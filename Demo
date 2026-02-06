@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doublé Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-900 text-white min-h-screen flex items-center justify-center">
+  <div class="bg-zinc-800 rounded-2xl shadow-xl p-6 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center mb-4">🎰 Doublé Demo</h1>
+
+    <div class="flex justify-between mb-4">
+      <span>Saldo:</span>
+      <span id="saldo" class="font-bold text-green-400">100</span>
+    </div>
+
+    <input id="aposta" type="number" placeholder="Valor da aposta" class="w-full p-2 rounded bg-zinc-700 mb-4" />
+
+    <div class="grid grid-cols-3 gap-2 mb-4">
+      <button onclick="apostar('vermelho')" class="bg-red-600 rounded-xl p-3">Vermelho (2x)</button>
+      <button onclick="apostar('preto')" class="bg-black rounded-xl p-3 border">Preto (2x)</button>
+      <button onclick="apostar('branco')" class="bg-gray-200 text-black rounded-xl p-3">Branco (14x)</button>
+    </div>
+
+    <div id="resultado" class="text-center text-lg font-semibold mt-4"></div>
+
+    <button onclick="resetar()" class="mt-6 w-full bg-blue-600 p-2 rounded-xl">Resetar Demo</button>
+  </div>
+
+  <script>
+    let saldo = 100;
+
+    function apostar(corEscolhida) {
+      const aposta = Number(document.getElementById('aposta').value);
+      const resultadoEl = document.getElementById('resultado');
+
+      if (aposta <= 0 || aposta > saldo) {
+        resultadoEl.textContent = 'Aposta inválida';
+        return;
+      }
+
+      const sorteio = Math.random() * 100;
+      let corSorteada = '';
+
+      // Chances estilo Blaze Double
+// Vermelho: 47.5% | Preto: 47.5% | Branco: 5%
+if (sorteio < 47.5) corSorteada = 'vermelho';
+else if (sorteio < 95) corSorteada = 'preto';
+else corSorteada = 'branco';
+
+      if (corEscolhida === corSorteada) {
+        let ganho = corEscolhida === 'branco' ? aposta * 14 : aposta * 2;
+        saldo += ganho - aposta;
+        resultadoEl.textContent = `✅ Caiu ${corSorteada.toUpperCase()}! Você ganhou ${ganho}`;
+      } else {
+        saldo -= aposta;
+        resultadoEl.textContent = `❌ Caiu ${corSorteada.toUpperCase()}! Você perdeu`;
+      }
+
+      document.getElementById('saldo').textContent = saldo;
+    }
+
+    function resetar() {
+      saldo = 100;
+      document.getElementById('saldo').textContent = saldo;
+      document.getElementById('resultado').textContent = '';
+      document.getElementById('aposta').value = '';
